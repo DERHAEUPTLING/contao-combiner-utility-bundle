@@ -1,0 +1,38 @@
+{
+    "name": "derhaeuptling/contao-combiner-utility-bundle",
+    "description": "Contao Combiner Utility bundle for Contao Open Source CMS",
+    "keywords": ["contao", "combiner"],
+    "type": "contao-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "derhaeuptling",
+            "homepage": "https://derhaeuptling.com/"
+        },
+        {
+            "name": "Kamil Kuzminski",
+            "email": "kamil.kuzminski@codefog.pl",
+            "homepage": "https://github.com/qzminski",
+            "role": "developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "contao/core-bundle": "^4.4"
+    },
+    "require-dev": {
+        "contao/manager-plugin": "^2.0",
+        "friendsofphp/php-cs-fixer": "^2.2"
+    },
+    "conflict": {
+        "contao/manager-plugin": "<2.0 || >=3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Derhaeuptling\\CombinerUtilityBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": "Derhaeuptling\\CombinerUtilityBundle\\ContaoManager\\Plugin"
+    }
+}
