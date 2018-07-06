@@ -3,6 +3,7 @@
 namespace Derhaeuptling\CombinerUtilityBundle\EventListener;
 
 use Contao\BackendUser;
+use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\LayoutModel;
 use Contao\PageModel;
 
@@ -35,6 +36,13 @@ class LayoutListener
             return ($user instanceof BackendUser) ? $user : null;
         }
 
-        return $user->authenticate() ? $user : null;
+        // Contao 4.4 will redirect to the login page if user is not authenticated
+        try {
+            $authenticated = $user->authenticate();
+        } catch (RedirectResponseException $e) {
+            return null;
+        }
+
+        return $authenticated ? $user : null;
     }
 }
