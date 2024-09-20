@@ -3,46 +3,34 @@
 namespace Derhaeuptling\CombinerUtilityBundle\EventListener;
 
 use Contao\BackendUser;
-use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
+use Contao\CoreBundle\Security\Authentication\Token\TokenChecker;
 use Contao\LayoutModel;
 use Contao\PageModel;
+use Contao\PageRegular;
 
+#[AsHook('getPageLayout')]
 class LayoutListener
 {
-    /**
-     * On get the page layout
-     *
-     * @param PageModel   $page
-     * @param LayoutModel $layout
-     */
-    public function onGetPageLayout(PageModel $page, LayoutModel $layout): void
+    private TokenChecker $tokenChecker;
+
+    public function __construct(TokenChecker $tokenChecker)
+    {
+        $this->tokenChecker = $tokenChecker;
+    }
+
+    public function __invoke(PageModel $pageModel, LayoutModel $layout, PageRegular $pageRegular): void
     {
         if (($user = $this->getBackendUser()) !== null && $user->disableCombineScripts) {
-            $layout->combineScripts = '';
+            $layout->combineScripts = false;
         }
     }
 
-    /**
-     * Get the backend user
-     *
-     * @return BackendUser|null
-     */
     private function getBackendUser(): ?BackendUser
     {
         $user = BackendUser::getInstance();
+        $hasBackendUser = $this->tokenChecker->hasBackendUser();
 
-        // Contao 4.5+
-        if (version_compare(VERSION, '4.5', '>=')) {
-            return ($user instanceof BackendUser) ? $user : null;
-        }
-
-        // Contao 4.4 will redirect to the login page if user is not authenticated
-        try {
-            $authenticated = $user->authenticate();
-        } catch (RedirectResponseException $e) {
-            return null;
-        }
-
-        return $authenticated ? $user : null;
+        return $hasBackendUser ? $user : null;
     }
 }
